@@ -54,11 +54,12 @@ def second_process(newfile, lastfile, use_columns, col_dict, start_id = 0):
 			data.append([row_id] + normalized_row)
 	return data
 
-def clean(files, lastfile, use_columns, folder=None):
+def clean(files, final_file, use_columns, folder=None):
 	col_dict= setup(use_columns)
 	row_count = 0
 	row_breaks = [0]
 	newfiles = []
+	data = []
 	for i, filename in enumerate(files):
 		if folder:
 			newfile = folder + "intermediate_" + str(i) + ".csv"
@@ -70,7 +71,17 @@ def clean(files, lastfile, use_columns, folder=None):
 		row_breaks.append(rows)
 
 	for i, newfile in enumerate(newfiles):
+		if folder:
+			lastfile = folder + "final_" + str(i) + ".csv"
+		else:
+			lastfile = "final_" + str(i) + ".csv"
 		start_id = row_breaks[i]
-		data = second_process(newfile, lastfile, use_columns, col_dict, start_id=start_id)
+		new_data = second_process(newfile, lastfile, use_columns, col_dict, start_id=start_id)
+		data = data + new_data
+
+	with open(final_file, 'wb') as csv_write:
+		data_writer = csv.writer(csv_write, delimiter=',')
+		for row in data:
+			data_writer.writerow(row)
 	print(row_count)
 	return data
