@@ -3,6 +3,7 @@ import math
 from Node import *
 from SOMMapper import *
 import sys
+import csv
 
 class SOM:
     def __init__(self, n, x_len = 10, y_len = 10, norm = 1, epochs = 25, theta_naught = 10, theta_f = .2):
@@ -13,7 +14,7 @@ class SOM:
         self.x_len = x_len
         self.y_len = y_len
         self.n = n
-        self.map = [[Node(i, j, self.n) for i in range(self.x_len)] for j in range(self.y_len)]
+        self.map = [[Node.Node(i, j, self.n) for i in range(self.x_len)] for j in range(self.y_len)]
         self.norm = norm
         self.epochs = epochs
         self.theta_naught = theta_naught
@@ -29,7 +30,12 @@ class SOM:
             ## Initalize numerator and denominator in weight equation
             #[[self.map(i, j).clear_weight_ratio() for i in range(self.x_len)] for j in range(self.y_len)]
 
-            compute_weights_job = SOMMapper(self.map, file_name)
+            ## Write current weight map to file
+            with open("map_file.csv", "w") as map_file:
+                writer = csv.writer(map_file)
+                writer.writerows(self.map)
+
+            compute_weights_job = SOMMapper(args = ["file_name", "--map", "map_file.csv", "--n", str(self.n)])
 
         return self.map
 

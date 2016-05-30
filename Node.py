@@ -1,16 +1,23 @@
 import random
 
 class Node:
-    def __init__(self, x, y, n):
+    def __init__(self, x, y, n, weights = None):
         self.x = x
         self.y = y
         self.n = n
-        self.weights = [random.random() for x in range(self.n)]
+        if weights == None:
+            self.weights = [random.random() for x in range(self.n)]
+        else:
+            self.weights = weights
         self.weight_num = 0,
         self.weight_dem = 0
+        self.u_val = 0
 
     def calculate_distance(self, input_vector):
-        return sum([(attrb - self.weights[i])^2 for i, attrb in enumerate(input_vector)])
+        distance = 0
+        for i in range(len(input_vector)):
+            distance += (input_vector[i] - self.weights[i]) ** 2
+        return distance
 
     def update_weights(self, weights):
         self.weights = [x / self.weight_dem for x in self.weight_num]
@@ -29,6 +36,8 @@ class Node:
 
     def update_denominator(self, weight_dem):
         self.weight_dem = weight_dem + self.weight_dem
-
+    
     def __repr__(self):
-        return "({},{}): {}".format(self.x, self.y, self.weights)
+        #return "({},{}): {}".format(self.x, self.y, self.weights)
+        return str(self.weights)
+    
