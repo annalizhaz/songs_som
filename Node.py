@@ -6,14 +6,14 @@ class Node:
         self.y = y
         self.n = n
         self.weights = [random.random() for x in range(self.n)]
-        self.weight_num = 0
+        self.weight_num = 0,
         self.weight_dem = 0
 
     def calculate_distance(self, input_vector):
         return sum([(attrb - self.weights[i])^2 for i, attrb in enumerate(input_vector)])
 
     def update_weights(self, weights):
-        self.weights = self.weight_num / self.weight_dem
+        self.weights = [x / self.weight_dem for x in self.weight_num]
         ## Clear weight ratios
         self.weight_num, self.weight_dem = 0
 
@@ -23,3 +23,12 @@ class Node:
     def update_weight_ratio(self, weight_num, weight_dem):
         self.weight_num = weight_num + self.weight_num
         self.weight_dem = weight_dem + self.weight_dem
+
+    def update_numerator(self, weight_num):
+        self.weight_num = weight_num + self.weight_num
+
+    def update_denominator(self, weight_dem):
+        self.weight_dem = weight_dem + self.weight_dem
+
+    def __repr__(self):
+        return "({},{}): {}".format(self.x, self.y, self.weights)

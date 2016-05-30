@@ -1,5 +1,8 @@
 import random
 import math
+from Node import *
+from SOMMapper import *
+import sys
 
 class SOM:
     def __init__(self, n, x_len = 10, y_len = 10, norm = 1, epochs = 25, theta_naught = 10, theta_f = .2):
@@ -16,16 +19,23 @@ class SOM:
         self.theta_naught = theta_naught
         self.theta_f = theta_f
 
-    def train_map(self, input_vectors):
+
+    def train_map(self, file_name):
         ## Initalize time variable t
         t = 0
-        for i in range(epochs):
+        for i in range(self.epochs):
             ## Set width exponential decay
-            theta = self.theta_naught * ((theta_f / theta_naught) ^ (t / i))
+            theta = self.theta_naught * ((self.theta_f / self.theta_naught) ** (i / self.epochs))
             ## Initalize numerator and denominator in weight equation
-            [[self.map(i, j).clear_weight_ratio() for i in range(self.x_len)] for j in range(self.y_len)]
+            #[[self.map(i, j).clear_weight_ratio() for i in range(self.x_len)] for j in range(self.y_len)]
 
-            for input_vector in input_vectors:
+            compute_weights_job = SOMMapper(self.map, file_name)
+
+        return self.map
+
+        '''
+            for song in input_vectors:
+                key, input_vector = (song[0], song[1:])
                 t += 1
 
                 ## Find min distance over K nodes
@@ -49,3 +59,13 @@ class SOM:
 
             ## Update weight vectors over K nodes
             [[self.map(i, j).set_weights() for i in range(self.x_len)] for j in range(self.y_len)]
+        '''
+
+
+if __name__ == "__main__":
+    file_name = sys.argv[2]
+    n = int(sys.argv[1])
+    ## file in remaining parameters
+
+    som_map = SOM(n)
+    grid = som_map.train_map(file_name)
