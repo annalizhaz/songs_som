@@ -20,6 +20,14 @@ class SOM:
         self.theta_naught = theta_naught
         self.theta_f = theta_f
 
+    def extract_weights(self, job, runner):
+        for line in runner.stream_output():
+            (x, y), value = job.parse_output_line(line)
+            #print(type(key[0]))
+            #print(type(value[0]))
+            self.map[x][y].update_weights(value)
+            print("({},{}) = {}".format(x, y, value))
+            
 
     def train_map(self, file_name):
         ## Initalize time variable t
@@ -35,12 +43,19 @@ class SOM:
                 writer = csv.writer(map_file)
                 writer.writerows(self.map)
 
-            compute_weights_job = SOMMapper(args = ["file_name", "--map", "map_file.csv", "--n", str(self.n)])
+            compute_weights_job = SOMMapper(args = [str(file_name), "--map", "map_file.csv", "--theta", str(theta), "--n", str(self.n)])
+
+            with compute_weights_job.make_runner() as compute_weights_runner:
+                compute_weights_runner.run()
+                
+                self.extract_weights(compute_weights_job, compute_weights_runner)
+
+                #self.map[][].update_weights(weight)
 
         return self.map
 
         '''
-            for song in input_vectors:
+            for song in input_vectors: 
                 key, input_vector = (song[0], song[1:])
                 t += 1
 

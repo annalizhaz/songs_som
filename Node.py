@@ -20,9 +20,12 @@ class Node:
         return distance
 
     def update_weights(self, weights):
+        self.weights = weights
+        '''
         self.weights = [x / self.weight_dem for x in self.weight_num]
         ## Clear weight ratios
         self.weight_num, self.weight_dem = 0
+        '''
 
     def clear_weight_ratio(self):
         self.weight_num, self.weight_dem = 0
@@ -32,6 +35,7 @@ class Node:
         self.weight_dem = weight_dem + self.weight_dem
 
     def update_numerator(self, weight_num):
+        print(type(weight_num))
         self.weight_num = weight_num + self.weight_num
 
     def update_denominator(self, weight_dem):
