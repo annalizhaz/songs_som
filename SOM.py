@@ -6,7 +6,7 @@ import sys
 import csv
 
 class SOM:
-    def __init__(self, n, x_len = 10, y_len = 10, epochs = 25, theta_naught = 10, theta_f = .2):
+    def __init__(self, n, x_len = 40, y_len = 40, epochs = 25, theta_naught = 10, theta_f = .2):
         '''
         x_len, y_len: size of grid
         n: size of vectors (number of attributes in data)
@@ -73,8 +73,8 @@ class SOM:
             for line in runner.stream_output():
                 (x, y), value = job.parse_output_line(line)
                 print(value)
-                text_file.write(value)
-                
+                file_name.write(str(value))
+
     def get_u_matrix(self):
         self.write_nodes_to_file()
 
@@ -92,9 +92,9 @@ if __name__ == "__main__":
     n = int(sys.argv[1])
     ## file in remaining parameters
 
-    #som_map = SOM(n)
-    #grid = som_map.train_map(file_name)
+    som_map = SOM(n)
+    grid = som_map.train_map(file_name)
 
-    #som_map.get_u_matrix()
+    som_map.get_u_matrix()
 
     #UMatrix(grid)

@@ -24,7 +24,7 @@ class UMatrixMapper(MRJob):
         for i in range(max(0, x_coord - 1), min(len(grid), x_coord + 2)):
             for j in range(max(0, y_coord - 1), min(len(grid[0]), y_coord + 2)):
                 distance = grid[i][j].calculate_distance(weights)
-                print("({},{}) - {}".format(x_coord, y_coord, distance))
+                #print("({},{}) - {}".format(x_coord, y_coord, distance))
                 yield((x_coord, y_coord), distance)
 
 
