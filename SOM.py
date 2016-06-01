@@ -6,7 +6,7 @@ import sys
 import csv
 
 class SOM:
-    def __init__(self, n, x_len = 10, y_len = 10, epochs = 10, theta_naught = 10, theta_f = .2):
+    def __init__(self, n, x_len = 40, y_len = 40, epochs = 25, theta_naught = 10, theta_f = .2):
         '''
         x_len, y_len: size of grid
         n: size of vectors (number of attributes in data)
