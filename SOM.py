@@ -57,12 +57,14 @@ class SOM:
                         writer.writerow([i,j]+node.weights)
 
     def extract_u_matrix(self, job, runner):
-        u_matrix = [0] * self.x_len
+        u_matrix = [[0] * self.y_len for x in range(self.x_len)]
+        for line in runner.stream_output():
+            (x, y), value = job.parse_output_line(line)
+            u_matrix[x][y] = value
+
         with open("u_matrix.txt", "w") as file_name:
-            for line in runner.stream_output():
-                (x, y), value = job.parse_output_line(line)
-                print(value)
-                file_name.write(str(value) + " ")
+                writer = csv.writer(file_name)
+                writer.writerows(u_matrix, delimiter = " ")
 
     def get_u_matrix(self):
         self.write_nodes_to_file()
@@ -81,9 +83,9 @@ if __name__ == "__main__":
     n = int(sys.argv[1])
     ## file in remaining parameters
 
-    som_map = SOM(n)
-    grid = som_map.train_map(file_name)
+    #som_map = SOM(n)
+    #grid = som_map.train_map(file_name)
 
-    som_map.get_u_matrix()
+    #som_map.get_u_matrix()
 
     #UMatrix(grid)
