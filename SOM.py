@@ -1,42 +1,38 @@
-import random
-import math
-from Node import *
-from SOMMapper import *
+from SOMMapper import SOMMapper
+from Node import Node
+
+from UMatrixMapper import UMatrixMapper
 import sys
 import csv
 
 class SOM:
-    def __init__(self, n, x_len = 10, y_len = 10, norm = 1, epochs = 25, theta_naught = 10, theta_f = .2):
+    def __init__(self, n, x_len = 40, y_len = 40, epochs = 25, theta_naught = 10, theta_f = .2):
         '''
         x_len, y_len: size of grid
         n: size of vectors (number of attributes in data)
+        epochs: number of iterations
+        theta_naught, theta_f: learning constants
+        map: Node grid
         '''
         self.x_len = x_len
         self.y_len = y_len
         self.n = n
-        self.map = [[Node.Node(i, j, self.n) for i in range(self.x_len)] for j in range(self.y_len)]
-        self.norm = norm
+        self.map = [[Node(i, j, self.n) for i in range(self.x_len)] for j in range(self.y_len)]
         self.epochs = epochs
         self.theta_naught = theta_naught
-        self.theta_f = theta_f
+        self.learning_factor = theta_f / theta_naught
 
     def extract_weights(self, job, runner):
         for line in runner.stream_output():
             (x, y), value = job.parse_output_line(line)
-            #print(type(key[0]))
-            #print(type(value[0]))
             self.map[x][y].update_weights(value)
             print("({},{}) = {}".format(x, y, value))
-            
 
     def train_map(self, file_name):
         ## Initalize time variable t
-        t = 0
         for i in range(self.epochs):
             ## Set width exponential decay
-            theta = self.theta_naught * ((self.theta_f / self.theta_naught) ** (i / self.epochs))
-            ## Initalize numerator and denominator in weight equation
-            #[[self.map(i, j).clear_weight_ratio() for i in range(self.x_len)] for j in range(self.y_len)]
+            theta = self.theta_naught * (self.learning_factor ** (i / self.epochs))
 
             ## Write current weight map to file
             with open("map_file.csv", "w") as map_file:
@@ -47,40 +43,36 @@ class SOM:
 
             with compute_weights_job.make_runner() as compute_weights_runner:
                 compute_weights_runner.run()
-                
                 self.extract_weights(compute_weights_job, compute_weights_runner)
-
-                #self.map[][].update_weights(weight)
 
         return self.map
 
-        '''
-            for song in input_vectors: 
-                key, input_vector = (song[0], song[1:])
-                t += 1
 
-                ## Find min distance over K nodes
-                min_distance = self.map[0][0].calculate_distance(input_vector)
-                bmu = (0, 0)
-                for j in range(self.x_len):
-                    for k in range(self.y_len):
-                        distance = self.map[j][k].calculate_distance(input_vector)
-                        ## Update best matching unit
-                        if min_distance > distance:
-                            min_distance = distance
-                            bmu = (j, k)
+    def write_nodes_to_file(self):
+        with open("node_list.csv", "w") as map_file:
+                writer = csv.writer(map_file)
+
+                for i, row in enumerate(self.map):
+                    for j, node in enumerate(row):
+                        writer.writerow([i,j]+node.weights)
+
+    def extract_u_matrix(self, job, runner):
+        with open("u_matrix.txt", "w") as file_name:
+            for line in runner.stream_output():
+                (x, y), value = job.parse_output_line(line)
+                print(value)
+                file_name.write(str(value))
+
+    def get_u_matrix(self):
+        self.write_nodes_to_file()
+
+        compute_u_matrix_job = UMatrixMapper(args = ["node_list.csv", "--map", "map_file.csv"])
+
+        with compute_u_matrix_job.make_runner() as compute_u_matrix_runner:
+            compute_u_matrix_runner.run()
+            self.extract_u_matrix(compute_u_matrix_job, compute_u_matrix_runner)
 
 
-                ## Accumulate numerator and denominator in weight equation over K nodes
-                for j in range(self.x_len):
-                    for k in range(self.y_len):
-                        coor_distance = (j - bmu[0])^2 + (k - bmu[1])^2
-                        neighborhood = math.exp(-coor_distance / theta^2)
-                        self.map[i][j].update_weight_ratio([neighborhood * x for x in input_vector], neighborhood)
-
-            ## Update weight vectors over K nodes
-            [[self.map(i, j).set_weights() for i in range(self.x_len)] for j in range(self.y_len)]
-        '''
 
 
 if __name__ == "__main__":
@@ -90,3 +82,7 @@ if __name__ == "__main__":
 
     som_map = SOM(n)
     grid = som_map.train_map(file_name)
+
+    som_map.get_u_matrix()
+
+    #UMatrix(grid)
