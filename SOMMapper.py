@@ -62,7 +62,7 @@ class SOMMapper(MRJob):
 
     def steps(self):
         return [MRStep(mapper = self.accumulate_weights,
-                       #combiner = self. ,
+                       combiner = self.accumlate_denominator,
                        reducer = self.accumlate_denominator),
                 MRStep(reducer = self.accumulate_numerator)]
 

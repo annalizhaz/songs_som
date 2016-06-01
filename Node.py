@@ -28,6 +28,7 @@ class Node:
     def update_weights(self, weights):
         self.weights = weights
 
+    @staticmethod
     def get_map(file_name):
         ## Read map from file
         with open(file_name) as map_file:

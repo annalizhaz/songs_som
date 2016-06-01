@@ -6,7 +6,7 @@ import sys
 import csv
 
 class SOM:
-    def __init__(self, n, x_len = 40, y_len = 40, epochs = 25, theta_naught = 10, theta_f = .2):
+    def __init__(self, n, x_len = 10, y_len = 10, epochs = 10, theta_naught = 10, theta_f = .2):
         '''
         x_len, y_len: size of grid
         n: size of vectors (number of attributes in data)
@@ -47,18 +47,6 @@ class SOM:
 
         return self.map
 
-    '''    
-    def get_map(self, file_name):
-        ## Read map from file
-        with open(file_name, "r") as map_file:
-            reader = csv.reader(map_file)
-            grid = list(reader)
-            for i, row in enumerate(grid):
-                for j, node in enumerate(row):
-                    weights = [float(x) for x in node[1:-1].split(",")]
-                    grid[i][j] = Node(i, j, len(weights), weights)
-        return grid
-    '''
 
     def write_nodes_to_file(self):
         with open("node_list.csv", "w") as map_file:
