@@ -10,7 +10,7 @@ LABELS = []
 
 def column_to_number(alpha_column):
     '''
-    Takes column labels as they are in excel(i.e., "A", "AB", etc.) an translates 
+    Takes column labels as they are in excel (i.e., "A", "AB", etc.) and translates 
     them to the corresponding number
     '''
 
