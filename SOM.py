@@ -1,7 +1,8 @@
-import sys
+import argparse
 import csv
 import matplotlib.pyplot as plt
 import matplotlib.cm as cm
+import math
 import numpy as np
 from SOMMapper import SOMMapper
 from UMatrixMapper import UMatrixMapper
@@ -9,7 +10,8 @@ from Node import Node
 
 
 class SOM:
-    def __init__(self, n, x_len = 40, y_len = 40, epochs = 15, theta_naught = 10, theta_f = .2):
+
+    def __init__(self, n, x_len, y_len, epochs, theta_f):
         '''
         x_len, y_len: grid size
         n: vectors length (i.e. number of attributes in dataset)
@@ -21,8 +23,8 @@ class SOM:
         self.y_len = y_len
         self.n = n
         self.epochs = epochs
-        self.theta_naught = theta_naught
-        self.learning_factor = theta_f / theta_naught
+        self.theta_naught = math.sqrt(self.x_len * self.y_len)
+        self.learning_factor = theta_f / self.theta_naught
 
         self.grid = [[Node(i, j, self.n) for i in range(self.x_len)] for j in range(self.y_len)]
 
@@ -50,8 +52,6 @@ class SOM:
             with compute_weights_job.make_runner() as compute_weights_runner:
                 compute_weights_runner.run()
                 self.extract_weights(compute_weights_job, compute_weights_runner)
-
-        return self.grid
 
 
     def extract_weights(self, job, runner):
@@ -109,8 +109,7 @@ class SOM:
     '''
     def graph_umatrix(self, matrix, bmus = None, labels = None):
         plt.clf()
-        plt.imshow(matrix[0:self.y_len, 0:self.x_len], aspect = "auto")
-        plt.set_cmap(cm.coolwarm)
+        plt.imshow(matrix, aspect = "auto", cmap = cm.coolwarm)
         plt.axis("off")
 
         ## Set colorbar legend
@@ -133,28 +132,26 @@ class SOM:
 
 
 if __name__ == "__main__":
-    '''
-    file_name = sys.argv[2]
-    n = int(sys.argv[1])
-    ## file in remaining parameters
+    ## Define and collect command line arguments
+    parser = argparse.ArgumentParser()
+    parser.add_argument("file_name", help = "file name of song vectors")
+    parser.add_argument("n", type = int, help = "length of vector attributes")
+    parser.add_argument("--x_len", default = 10, type = int, help = "number of grid rows")
+    parser.add_argument("--y_len", default = 10, type = int, help = "number of grid columns")
+    parser.add_argument("--epochs", default = 15, type = int, help = "number of iterations")
+    parser.add_argument("--theta_f", default = .2, type = float, help = "exponential decay constant")
+    args = parser.parse_args()
 
-    som_map = SOM(n)
-    grid = som_map.train_map(file_name)
+    ## Create and train map
+    som_map = SOM(args.n, args.x_len, args.y_len, args.epochs, args.theta_f)
+    som_map.train_map(args.file_name)
 
-    song_a = [0.9791148682, 0.4183931491,0.0484596353]
-    song_b = [0, 0.2690661652, 0.0919894148]
-    song_c = [0.9915464943, 0.4234423412, 0.0692342276]
-    labels = ["song a", "song b", "song c"]
-    bmus = som_map.get_bmus([song_a, song_b, song_c])
-    
+    ## Create and save u-matrix
     matrix = som_map.get_u_matrix()
-    som_map.graph_umatrix(matrix, bmus, labels)
-    '''
-    #song_a = [0.9791148682, 0.4183931491,0.0484596353]
-    #song_b = [0, 0.2690661652, 0.0919894148]
-    #song_c = [0.9915464943, 0.4234423412, 0.0692342276]
-    #labels = ["song a", "song b", "song c"]
+    som_map.graph_umatrix(matrix)
 
-    #goatwhore = [0, 0.2946608101, 0.0603604847] (forever consumed by oblvioun)
-    #throbbing = [0, 0.4670240136, 0.0830032339] (industrial intro)
-    #britney = [0.9930382894, 0.3205599089, 0.0480877322]
+    #goatwhore = [0, 0.2946608101, 0.0603604847]
+    #throbbing_gristle = [0, 0.4670240136, 0.0830032339]
+    #britney_spears = [0.9930382894, 0.3205599089, 0.0480877322]
+    #labels = ["Goatwhore", "Throbbing Gistle", "Britney Spears"]
+    #bmus = som_map.get_bmus([goatwhore, throbbing_gristle, britney_spears])
