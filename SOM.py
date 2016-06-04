@@ -1,7 +1,7 @@
 import argparse
 import csv
-matplotlib.use("Agg")
 import matplotlib.pyplot as plt
+plt.use("Agg") ## for remote run
 import matplotlib.cm as cm
 import math
 import numpy as np
