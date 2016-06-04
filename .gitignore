@@ -1,6 +1,10 @@
 data/
 clean_data/
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> fa02d979ac4a7f8cbd08bbad907167fa5b79a9f3
 # OS generated files #
 ######################
 .DS_Store
@@ -9,4 +13,8 @@ clean_data/
 .Spotlight-V100
 .Trashes
 ehthumbs.db
+<<<<<<< HEAD
 Thumbs.db
+=======
+Thumbs.db
+>>>>>>> fa02d979ac4a7f8cbd08bbad907167fa5b79a9f3

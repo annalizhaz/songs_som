@@ -48,7 +48,11 @@ def first_process(filename, newfile, use_columns, col_dict):
             if valid_row:
                 row_count += 1
                 data_writer.writerow(row_to_write)
+<<<<<<< HEAD
                 LABELS.append((row[0], row[1], row[2]))
+=======
+                LABELS.append((row_count, row[0], row[1], row[2]))
+>>>>>>> fa02d979ac4a7f8cbd08bbad907167fa5b79a9f3
     return row_count
 
 def setup(use_columns):
