@@ -1,6 +1,7 @@
 import argparse
 import csv
 import matplotlib.pyplot as plt
+matplotlib.use("Agg")
 import matplotlib.cm as cm
 import math
 import numpy as np

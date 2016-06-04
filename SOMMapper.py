@@ -12,11 +12,16 @@ class SOMMapper(MRJob):
         self.add_passthrough_option("--theta", type = "float")
         self.add_file_option("--map")
 
+
     def load_weights(self):
         ## Load grid weights from file
         self.grid = Node.get_map(self.options.map)
 
+
     def calculate_neighborhood(self, _, input_vector):
+        ## Load grid weights
+        grid = Node.get_map(self.options.map)
+
         ## Extract weight vectors from passed fields
         input_vector = [float(x) for x in input_vector.split(",")][1:]
 
@@ -24,7 +29,7 @@ class SOMMapper(MRJob):
         x, y = Node.compute_winning_vector(self.grid, input_vector)
 
         ## Calculate Gausian neighborhood function for all grid nodes
-        for i, row in enumerate(self.grid):
+        for i, row in enumerate(grid):
             for j, node in enumerate(row):
                 coor_distance = (i - int(x)) ** 2 + (j - int(y)) ** 2
 
