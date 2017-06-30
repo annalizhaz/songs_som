@@ -13,6 +13,11 @@ class SOMMapper(MRJob):
         self.add_file_option("--map")
 
 
+    def load_weights(self):
+        ## Load grid weights from file
+        self.grid = Node.get_map(self.options.map)
+
+
     def calculate_neighborhood(self, _, input_vector):
         ## Load grid weights
         grid = Node.get_map(self.options.map)
@@ -21,7 +26,7 @@ class SOMMapper(MRJob):
         input_vector = [float(x) for x in input_vector.split(",")][1:]
 
         ## Find BMU
-        x, y = Node.compute_winning_vector(grid, input_vector)
+        x, y = Node.compute_winning_vector(self.grid, input_vector)
 
         ## Calculate Gausian neighborhood function for all grid nodes
         for i, row in enumerate(grid):
@@ -54,7 +59,8 @@ class SOMMapper(MRJob):
 
 
     def steps(self):
-        return [MRStep(mapper = self.calculate_neighborhood,
+        return [MRStep(mapper_init = self.load_weights,
+                       mapper = self.calculate_neighborhood,
                        combiner = self.sum_ratios,
                        reducer = self.sum_ratios),
                 MRStep(reducer = self.calculate_ratios)]
